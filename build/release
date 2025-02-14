@@ -1,0 +1,81 @@
+mvn install -f build
+
+mvn build-helper:parse-version versions:set-property versions:commit \
+  -Dproperty=ejava.version \
+  -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
+  -f build/ejava-build-parent
+
+find build -name pom.xml -exec  \
+  mvn build-helper:parse-version versions:set versions:commit \
+    -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
+    -f {} \;
+
+mvn install -f build
+git add build
+git commit -m "releasing current build poms"
+
+for pom in $(find . -name pom.xml -exec grep -l '>ejava-build-parent<' {} \;); do   
+  mvn versions:update-parent -f $pom
+  git add $pom
+done
+
+mvn build-helper:parse-version versions:set-property versions:commit \
+  -Dproperty=doc.version \
+  -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
+  -f coursedocs
+git add coursedocs/pom.xml
+
+git commit -m "updated build poms and refs to release"
+
+(mkdir -p target && cd target && git clone .. nextparent)
+
+mvn build-helper:parse-version versions:set-property versions:commit \
+  -Dproperty=ejava.version \
+  -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT \
+  -f target/nextparent/build/ejava-build-parent
+
+find target/nextparent/build -name pom.xml -exec \
+  mvn build-helper:parse-version versions:set versions:commit \
+    -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT \
+    -f {} \;
+mvn install -f target/nextparent/build
+
+
+mvn -batch-mode build-helper:parse-version release:prepare release:perform \
+  -DautoResolveSnapshots=true \
+  -DautoVersionSubmodules=true \
+  -DpreparationGoals=validate \
+  -Dgoals=validate \
+  -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
+  -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT \
+  -Dtag=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
+  -DpushChanges=false \
+  -DlocalCheckout=true \
+  -Drelease=true \
+  -Pall-modules
+
+mvn build-helper:parse-version versions:set-property versions:commit \
+  -Dproperty=ejava.version \
+  -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT \
+  -f build/ejava-build-parent
+
+find build -name pom.xml -exec  \
+  mvn build-helper:parse-version versions:set versions:commit \
+    -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT \
+    -f {} \;
+
+git add build
+
+for pom in $(find . -name pom.xml -exec grep -l '>ejava-build-parent<' {} \;); do   
+   mvn versions:update-parent versions:commit -DallowSnapshots=true -DskipResolution=true -f $pom
+  git add $pom
+done
+
+mvn build-helper:parse-version versions:set-property versions:commit \
+  -Dproperty=doc.version \
+  -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}-SNAPSHOT \
+  -f coursedocs
+git add coursedocs/pom.xml
+
+git commit -m "updated refs for next revision"
+
