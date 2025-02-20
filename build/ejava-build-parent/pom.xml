@@ -60,7 +60,7 @@
     </properties>
 
     <repositories>
-        <repository>
+        <!-- <repository>
             <id>ejava-nexus-releases</id>
             <url>https://pika.jhuep.com/nexus/repository/ejava-releases</url>
             <releases>
@@ -80,7 +80,7 @@
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
-        </repository>
+        </repository> -->
     </repositories>
 
     <build>

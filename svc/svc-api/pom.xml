@@ -19,7 +19,8 @@
     </description>
 
     <modules>
+       
         <module>content-quotes-example</module>
+       
     </modules>
-
 </project>

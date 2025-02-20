@@ -98,7 +98,7 @@
     </build>
 
 
-    <distributionManagement>
+    <!-- <distributionManagement>
         <site>
             <id>ejava.site</id>
             <url>${site.deploy.url}</url>
@@ -120,7 +120,7 @@
         <connection>scm:git:git@github.com:alamnr/ejava-springboot.git</connection>
         <developerConnection>scm:git:git@github.com:alamnr/ejava-springboot.git</developerConnection>
         <tag>@{project.version}</tag>
-    </scm>
+    </scm> -->
 
 
 </project>
