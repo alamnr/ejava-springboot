@@ -1,25 +1,20 @@
 package info.ejava.examples.svc.content.quotes.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import lombok.*;
+
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-
-import jakarta.json.bind.annotation.JsonbTypeDeserializer;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.With;
 
 @Getter
 @Setter
@@ -28,11 +23,10 @@ import lombok.With;
 @AllArgsConstructor
 @With
 
-@XmlRootElement(name = "dates" , namespace = "urn:ejava.svc-controllers.quotes")
+@XmlRootElement(name = "dates", namespace = "urn:ejava.svc-controllers.quotes")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JacksonXmlRootElement(localName = "dates" , namespace= "urn:ejava.svc-controllers.quotes")
+@JacksonXmlRootElement(localName = "dates", namespace = "urn:ejava.svc-controllers.quotes")
 public class ADate {
-
     @JsonbTypeDeserializer(JsonbTimeDeserializers.ZonedDateTimeJsonbDeserializer.class)
     @XmlJavaTypeAdapter(JaxbTimeAdapters.ZonedDateTimeJaxbAdapter.class)
     private ZonedDateTime zdt;
@@ -42,7 +36,7 @@ public class ADate {
     private OffsetDateTime odt;
 
     @JsonbTypeDeserializer(JsonbTimeDeserializers.LocalDateTimeJsonbDeserializer.class)
-    @XmlJavaTypeAdapter(JaxbTimeAdapters.LocalDateJaxbAdapter.class)
+    @XmlJavaTypeAdapter(JaxbTimeAdapters.LocalDateTimeJaxbAdapter.class)
     private LocalDateTime ldt;
 
     @JsonbTypeDeserializer(JsonbTimeDeserializers.InstantJsonbDeserializer.class)
@@ -51,19 +45,19 @@ public class ADate {
 
     @JsonbTypeDeserializer(JsonbTimeDeserializers.DateJsonbDeserializer.class)
     @XmlJavaTypeAdapter(JaxbTimeAdapters.DateJaxbAdapter.class)
+    @JsonbTypeSerializer(JsonbTimeSerializers.DateJsonbSerializer.class)
     private Date date;
 
-
     public static ADate of(ZonedDateTime zdt) {
-        return new ADate(zdt, zdt.toOffsetDateTime(),zdt.toLocalDateTime(), zdt.toInstant(), Date.from(zdt.toInstant()));
+        return new ADate(zdt, zdt.toOffsetDateTime(), zdt.toLocalDateTime(), zdt.toInstant(), Date.from(zdt.toInstant()));
     }
 
-    public ADate truncateDateToMillis(){
+    public ADate truncateDateToMillis() {
         Date milliDate = Date.from(date.toInstant().truncatedTo(ChronoUnit.MILLIS));
         return of(zdt).withDate(milliDate);
     }
 
-     @Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ADate)) return false;
@@ -86,6 +80,4 @@ public class ADate {
         result = 31 * result + (date != null ? date.hashCode() : 0);
         return result;
     }
-
-
 }

@@ -1,35 +1,26 @@
 package info.ejava.examples.svc.content.quotes.dto;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
-
-public abstract class JaxbTimeAdapters<T> extends XmlAdapter<String,T> {
-
-    @Override
-    public String marshal(T timeStamp) throws Exception {
-        
-        return timeStamp == null ? null : doFormat(ISODateFormat.MARSHALLER, timeStamp);
-    }
-
+public abstract class JaxbTimeAdapters<T> extends XmlAdapter<String, T> {
     @Override
     public T unmarshal(String text) throws Exception {
         return text == null ? null : doParse(text, ISODateFormat.UNMARSHALLER);
     }
 
+    @Override
+    public String marshal(T timestamp) throws Exception {
+        return timestamp==null ? null : doFormat(ISODateFormat.MARSHALLER, timestamp);
+    }
+
     protected abstract T doParse(String text, DateTimeFormatter dtf);
     protected abstract String doFormat(DateTimeFormatter dtf, T timestamp);
 
-    // a simpler first example
+    //a simpler "first example"
     public static class LocalDateJaxbAdapter extends JaxbTimeAdapters<LocalDate> {
-
         @Override
         public LocalDate unmarshal(String text) {
             return text == null ? null : LocalDate.parse(text, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -43,7 +34,6 @@ public abstract class JaxbTimeAdapters<T> extends XmlAdapter<String,T> {
         protected LocalDate doParse(String text, DateTimeFormatter dtf) { return unmarshal(text); }
         @Override
         protected String doFormat(DateTimeFormatter dtf, LocalDate timestamp) { return marshal(timestamp); }
-
     }
 
     public static class InstantJaxbAdapter extends JaxbTimeAdapters<Instant> {
@@ -119,5 +109,4 @@ public abstract class JaxbTimeAdapters<T> extends XmlAdapter<String,T> {
             return dtf.format(zdt);
         }
     }
-
 }
