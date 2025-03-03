@@ -1,6 +1,5 @@
 package info.ejava.examples.svc.content.quotes.dto;
 
-import java.security.cert.X509CRL;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;

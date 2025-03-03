@@ -71,9 +71,11 @@ public class DateTest {
     @ParameterizedTest
     @MethodSource("dateText")
     public void formatters(String dateText, ZonedDateTime dateValue) {
+        log.info("========={}========{}=========",dateText, dateValue);
         for (DateTimeFormatter dtf: FORMATTERS()) {
             log.info("{}", dtf.format(dateValue));
         }
+        log.info("===========================");
     }
 
     @ParameterizedTest
@@ -103,6 +105,7 @@ public class DateTest {
 
         assertThat(zdt).isEqualTo(dateValue);
         assertThat(odt).isEqualTo(dateValue.toOffsetDateTime());
+        //assertThat(ldt).isEqualTo(dateValue.toLocalDateTime());
     }
 
     @ParameterizedTest

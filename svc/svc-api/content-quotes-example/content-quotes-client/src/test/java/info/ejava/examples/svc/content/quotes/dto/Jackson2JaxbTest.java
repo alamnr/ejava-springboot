@@ -16,8 +16,8 @@ public class Jackson2JaxbTest extends InteropTestBase {
 
     @BeforeEach
     public void init() {
-        jaxbXml.init();
         jacksonXml.init();
+        jaxbXml.init();
     }
 
     @ParameterizedTest

@@ -22,5 +22,10 @@ public class Pair<K,V> {
         System.out.println("Key: "+key + ", Value: "+ value+", Another: "+another);
         return "genericMethodWith3GenericType";
     }
+    
+    public <T> T genericMethodHaving1TypeParameterReturnsType(Class<T> type){
+        T result = null;
+        return result;
+    }
 
 }

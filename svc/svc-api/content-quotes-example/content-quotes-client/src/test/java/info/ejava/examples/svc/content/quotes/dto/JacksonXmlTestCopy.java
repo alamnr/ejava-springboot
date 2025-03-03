@@ -1,9 +1,4 @@
 package info.ejava.examples.svc.content.quotes.dto;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -11,21 +6,31 @@ import java.time.ZoneOffset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
-public class JacksonXmlTest extends MarshallingTestBase {
+public class JacksonXmlTestCopy extends MarshallingTestBaseCopy {
+
     private XmlMapper mapper;
 
     @Override
     @BeforeEach
     public void init() {
         mapper = new Jackson2ObjectMapperBuilder()
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .dateFormat(new ISODateFormat())
-                .createXmlMapper(true)
-                .build();
-}
+                    .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+                    .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    .dateFormat(new ISODateFormat())
+                    .createXmlMapper(true)
+                    .build();
+    }
 
+    
     @Override
     public <T> String marshal(T object) throws IOException {
         StringWriter buffer = new StringWriter();

@@ -1,11 +1,9 @@
 package info.ejava.examples.svc.content.quotes.dto;
 
-import net.datafaker.Faker;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import static info.ejava.examples.svc.content.quotes.dto.QuoteDTOFactory.oneUpId;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -13,44 +11,49 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static info.ejava.examples.svc.content.quotes.dto.QuoteDTOFactory.oneUpId;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.BDDAssertions.then;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import lombok.extern.slf4j.Slf4j;
+import net.datafaker.Faker;
 
 @Slf4j
-public abstract class MarshallingTestBase {
+public abstract class MarshallingTestBaseCopy {
     
     protected static final Faker faker = new Faker();
 
     public static ZonedDateTime randomZdt() {
-        return ZonedDateTime.ofInstant(faker.date().past(100*365, TimeUnit.DAYS).toInstant(),ZoneOffset.UTC);
+        return ZonedDateTime.ofInstant(faker.date().past(100*36, TimeUnit.DAYS).toInstant(), ZoneOffset.UTC);
     }
+    
     public static final TimeZone UTC_TZ = TimeZone.getTimeZone("UTC");
 
     public static final String ISO_8601_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX"; //1976-07-04T00:00:00.123Z, .123+00
     public static final String RFC_822_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"; //1976-07-04T00:00:00.123+0000
     public static final String ISO_8601_DATETIME4_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXX"; //1976-07-04T00:00:00.123+0000
     public static final String ISO_8601_DATETIME5_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"; //1976-07-04T00:00:00.123+00:00
-//    public static final String ISO_8601_DATETIME5_FORMAT_DTF = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx"; //1976-07-04T00:00:00.123+00:00
+    // public static final String ISO_8601_DATETIME5_FORMAT_DTF = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx"; //1976-07-04T00:00:00.123+00:00
 
-    public final String DATES_XML=
-    // "<q:dates xmlns:q=\"urn:ejava.svc-controllers.quotes\"><date>%s</date></q:dates>";
-       "<q:dates xmlns:q=\"urn:ejava.svc-controllers.quotes\"><date>%s</date></q:dates>";
+    public final String DATES_XML = "<q:dates xmlns:q=\"urn:ejava.svc-controllers.quotes\"><date>%s</date></q:dates>";
 
-    public final String DATES_JSON = "{\"date\" : \"%s\"}";
+    public final String DATES_JSON = "{\"date\":\"%s\"}";
 
     protected static ZonedDateTime jul4Utc = ZonedDateTime.of(1776, 7, 4, 0, 0, 0, 123456789, ZoneId.of("UTC"));
     protected QuoteDTOFactory quoteDTOFactory = new QuoteDTOFactory();
 
     public void init() {}
-    
+
     protected abstract <T> String marshal(T object) throws Exception;
     protected abstract <T> T unmarshal(Class<T> type, String buffer) throws Exception;
     protected abstract String get_marshalled_adate(String dateText);
@@ -62,15 +65,21 @@ public abstract class MarshallingTestBase {
         return result;
     }
 
+    protected boolean canParseFormat(String format, ZoneOffset tzo) {
+        return true;
+    }
+
+
+
     @Test
     public void quote_dto_marshals() throws Exception {
 
         // given - a quote
         QuoteDTO quote = quoteDTOFactory.make();
-        quote.setIgnored("ignored");
+        quote.setIgnored("ignore");
 
-        // when - marshalled to a string and unmarshal to an object
-        QuoteDTO result =  marshal_and_demarshal(quote, QuoteDTO.class);
+        // when - marshal to string json and unmarshall to an object
+        QuoteDTO result = marshal_and_demarshal(quote, QuoteDTO.class);
 
         // then 
         then(result.getText()).isEqualTo(quote.getText());
@@ -78,24 +87,24 @@ public abstract class MarshallingTestBase {
         then(result.getDate()).isEqualTo(quote.getDate());
         then(result.getIgnored()).isNull();
 
-        log.info("date = {}",quote.getDate());
+        log.info("date = {}", quote.getDate());
         DateTimeFormatter dtf = DateTimeFormatter.ISO_LOCAL_DATE;
-        log.info("dtf = {}",dtf.format(quote.getDate()));
+        log.info("dtf = {}", dtf.format(quote.getDate()));
+    } 
 
-
-    }
     @Test
     public void quotesList_dto_marshals() throws Exception {
-        //given - some quotes
-        QuoteListDTO quotesList = quoteDTOFactory.listBuilder().make(3,3, oneUpId);
+        // given - some quotes
+        QuoteListDTO quotesList = quoteDTOFactory.listBuilder().make(3, 3, oneUpId);
 
-        //when
+        // when - 
         QuoteListDTO result = marshal_and_demarshal(quotesList, QuoteListDTO.class);
 
-        //then
+        // then
         then(result.getCount()).isEqualTo(quotesList.getCount());
-        Map<Integer, QuoteDTO> quoteMap = result.getQuotes().stream().collect(Collectors.toMap(QuoteDTO::getId, q->q));
-        for (QuoteDTO expected: quotesList.getQuotes()) {
+        Map<Integer,QuoteDTO> quoteMap = result.getQuotes().stream().collect(Collectors.toMap(QuoteDTO::getId,  q->q));
+
+        for(QuoteDTO expected: quotesList.getQuotes()) {
             QuoteDTO actual = quoteMap.remove(expected.getId());
             then(actual).isNotNull();
             then(actual.getText()).isEqualTo(expected.getText());
@@ -103,26 +112,31 @@ public abstract class MarshallingTestBase {
             then(actual.getDate()).isEqualTo(expected.getDate());
         }
     }
+
     @Test
     public void message_dto_marshals() throws Exception {
-        //given
-        MessageDTO msg = MessageDTO.builder()
-                .url("http://foo.com")
-                .text("testing")
-                .build();
+        // given
 
-        //when
-        MessageDTO result = marshal_and_demarshal(msg, MessageDTO.class);
+        MessageDTO messageDTO = MessageDTO.builder()
+                                            .url("http://foo.com")
+                                            .text("testing")
+                                            .build();
 
-        //then
-        then(result.getText()).isEqualTo(msg.getText());
+        // when
+        MessageDTO result = marshal_and_demarshal(messageDTO, MessageDTO.class);
+
+        // then
+        then(result).isNotNull();
+        then(result.getUrl()).isEqualTo(messageDTO.getUrl());
+        then(result.getText()).isEqualTo(messageDTO.getText());
     }
+
     @ParameterizedTest
     @MethodSource("read_from_formats")
-    public void parse_date(String dateText, String name, Date date) throws Exception {
-        //given - a known date with a specific format added to the marshalled body
-        String body = get_marshalled_adate(dateText);
-        log.info("{} => {}", name, dateText);
+    public void parse_date(String dateText,String name, Date date) throws Exception {
+        // given - a known date with a specific format added to the marshalled body
+        String body = get_marshalled_adate(dateText) ;
+        log.info("{} => {} ", name, dateText);
 
         //when unmarshalled
         ADate dates=null;
@@ -133,6 +147,7 @@ public abstract class MarshallingTestBase {
             fail(ex.toString());
         }
         assertThat(dates.getDate()).isEqualTo(date);
+
     }
 
     public static Stream<Arguments> read_from_formats() {
@@ -165,12 +180,10 @@ public abstract class MarshallingTestBase {
             }
         }
         return params.stream();
+
     }
 
-    protected boolean canParseFormat(String format, ZoneOffset tzo) {
-        return true;
-    }
-
+    
     public static Stream<Arguments> read_by_formats() {
         List<Arguments> params = new ArrayList<>();
         for (ZoneId zid: new ZoneId[]{ ZoneOffset.UTC, ZoneOffset.ofHours(-5)}) {
@@ -211,8 +224,5 @@ public abstract class MarshallingTestBase {
         Date date = Date.from(ZonedDateTime.parse(dateText, dtf).toInstant());
         assertThat(date).isEqualTo(Date.from(zdt.toInstant()));
     }
-
-
-
 
 }
