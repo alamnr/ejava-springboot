@@ -18,6 +18,6 @@
 
     <modules>
         <module>content-quotes-client</module>
-        <!-- <module>content-quotes-svc</module> -->
+        <module>content-quotes-svc</module> 
     </modules>
 </project>

@@ -18,6 +18,9 @@
 
     <modules>
         <module>ejava-util</module>
+        <module>ejava-dto-util</module>
+        <module>ejava-web-util</module>
+        <module>ejava-webflux-util</module>
     </modules>
 
 
