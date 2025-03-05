@@ -20,10 +20,12 @@ public class Populate implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         int count = 20;
-        log.warn("Populating {} quotes. ", count)
+        log.warn("Populating {} quotes. ", count);
         quoteDTOFactory.listBuilder().make(count,count)
                         .getQuotes()
                         .stream().forEach(quote -> quoteService.createQuote(quote));
     }
+
+    
     
 }
