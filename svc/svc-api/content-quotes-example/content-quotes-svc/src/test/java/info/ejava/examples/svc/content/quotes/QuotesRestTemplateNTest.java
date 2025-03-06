@@ -62,7 +62,7 @@ public class QuotesRestTemplateNTest {
 
     @BeforeEach
     public void setUp() {
-        log.info("clearing all gestures");
+        log.info("clearing all quotes");
         restTemplate.delete(quotesUrl);
     }
 
