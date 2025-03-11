@@ -1,8 +1,9 @@
 package info.ejava.examples.svc.springdoc.contest.api;
 
+import org.springframework.http.ResponseEntity;
+
 import info.ejava.examples.svc.springdoc.contest.dto.ContestDTO;
 import info.ejava.examples.svc.springdoc.contest.dto.ContestListDTO;
-import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 
 public interface ContestApi {

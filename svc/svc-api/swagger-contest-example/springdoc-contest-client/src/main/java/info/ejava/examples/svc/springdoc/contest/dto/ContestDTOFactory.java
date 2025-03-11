@@ -69,7 +69,7 @@ public class ContestDTOFactory {
                     .mapToObj(i->faker.company().buzzword())
                     .collect(Collectors.joining(" "));
         }
-        public List<ContestDTO> quotes(int min, int max, UnaryOperator<ContestDTO>...visitors) {
+        public List<ContestDTO> contests(int min, int max, UnaryOperator<ContestDTO>...visitors) {
             return IntStream.range(0, faker.number().numberBetween(min, max))
                     .mapToObj(i->ContestDTOFactory.this.make(visitors))
                     .collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class ContestDTOFactory {
 
         public ContestListDTO make(int min, int max, UnaryOperator<ContestDTO>...visitors) {
             return ContestListDTO.builder()
-                    .contests(quotes(min, max, visitors))
+                    .contests(contests(min, max, visitors))
                     .build();
         }
     }

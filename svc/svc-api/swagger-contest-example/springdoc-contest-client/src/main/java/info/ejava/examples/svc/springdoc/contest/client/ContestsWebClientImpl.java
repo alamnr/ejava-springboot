@@ -50,14 +50,21 @@ public class ContestsWebClientImpl implements ContestApi {
     @Override
     public Mono<ResponseEntity<ContestDTO>> createContest(ContestDTO contest) {
         URI url = UriComponentsBuilder.fromUri(baseUrl).path(CONTESTS_PATH).build().toUri();
-        WebClient.RequestHeadersSpec<?> requestSpec = webclient.post().uri(url).contentType(mediaType).accept(mediaType).bodyValue(contest);
+        WebClient.RequestHeadersSpec<?> requestSpec = webclient.post()
+                                                        .uri(url)
+                                                        .contentType(mediaType)
+                                                        .accept(mediaType)
+                                                        .body(Mono.just(contest),ContestDTO.class);
         return requestSpec.retrieve().toEntity(ContestDTO.class);
     }
 
     @Override
     public Mono<ResponseEntity<Void>> updateContest(int id, ContestDTO contest) {
         URI url = UriComponentsBuilder.fromUri(baseUrl).path(CONTEST_PATH).build(id);
-        WebClient.RequestHeadersSpec<?> requestSpec = webclient.put().contentType(mediaType).bodyValue(contest);
+        WebClient.RequestHeadersSpec<?> requestSpec = webclient.put()
+                                                        .uri(url)
+                                                        .contentType(mediaType)
+                                                        .bodyValue(contest);
         return requestSpec.retrieve().toEntity(Void.class);
     }
 

@@ -11,6 +11,7 @@ import info.ejava.examples.common.exceptions.ClientErrorException.BadRequestExce
 import info.ejava.examples.common.exceptions.ClientErrorException.InvalidInputException;
 import info.ejava.examples.common.exceptions.ClientErrorException.NotFoundException;
 import info.ejava.examples.common.exceptions.ServerErrorException.InternalErrorException;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 
 /*
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
  @RestControllerAdvice
+ //@Hidden
  @Slf4j
 public class ExceptionAdvice {
 

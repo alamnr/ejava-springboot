@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import info.ejava.examples.svc.springdoc.contest.dto.ContestDTO;
 import info.ejava.examples.svc.springdoc.contest.dto.ContestDTOFactory;
 import info.ejava.examples.svc.springdoc.contest.dto.ContestListDTO;
-import info.ejava.examples.svc.springdoc.contest.dto.ContestDTOFactory.ContestListDTOFactory;
+
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 
@@ -57,6 +57,8 @@ public abstract class MarshallingTestBase {
             ContestDTO actual = contestMap.remove(expected.getId());
             compare(actual, expected);
         }
+        
+
 
 
     }

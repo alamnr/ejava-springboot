@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ctc.wstx.shaded.msv_core.util.Uri;
+
 
 import info.ejava.examples.svc.content.quotes.api.QuotesApi;
 import info.ejava.examples.svc.content.quotes.dto.QuoteDTO;

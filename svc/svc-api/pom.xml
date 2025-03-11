@@ -21,6 +21,7 @@
     <modules>
        
         <module>content-quotes-example</module>
+        <module>swagger-contest-example</module>
        
     </modules>
 </project>
