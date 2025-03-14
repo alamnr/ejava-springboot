@@ -29,8 +29,8 @@ import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
  * This swagger model class example will express all fields within this class file
  * and not through any properties.
  */
-// @Schema(description="This class describes a contest between a home and away team, " +
-//         "either in the past or future.")
+@Schema(description="This class describes a contest between a home and away team, " +
+        "either in the past or future.")
 public class ContestDTO {
     public static final String CONTEST_NAMESPACE = "urn:ejava.svc-swagger.contests";
 
@@ -42,56 +42,56 @@ public class ContestDTO {
      * int and Integer, that caused a parsing problem because the API spec generation
      * wanted to parse an integer from the example.
      */
-//     @Schema(description = "A read-only ID assigned by the service during create.",
-//             example = "0", //valid integer example required to avoid parse stack trace at startup
-//             accessMode = READ_ONLY)
+    @Schema(description = "A read-only ID assigned by the service during create.",
+            example = "0", //valid integer example required to avoid parse stack trace at startup
+            accessMode = READ_ONLY)
     private int id;
 
     @JsonProperty(required = false)
-//     @Schema(//position = 3,
-//             description = "Scheduled or completed contests should have a scheduled started time " +
-//                     "expressed in LocalDateTime with offset from UTC.")
+    @Schema(//position = 3,
+            description = "Scheduled or completed contests should have a scheduled started time " +
+                    "expressed in LocalDateTime with offset from UTC.")
     @EqualsAndHashCode.Exclude
     private OffsetDateTime scheduledStart;
 
     @JsonProperty(required = false)
-//     @Schema(//position = 4,
-//             example = "PT60M",
-//             type = "string",
-//             description = "Each scheduled contest should have a period of time specified that " +
-//                     "identifies the duration of the contest. e.g., PT60M, PT2H")
+    @Schema(//position = 4,
+            example = "PT60M",
+            type = "string",
+            description = "Each scheduled contest should have a period of time specified that " +
+                    "identifies the duration of the contest. e.g., PT60M, PT2H")
     private Duration duration;
 
     @JsonProperty(required = true)
-//     @Schema(//position = 5,
-//             description = "This value will be true when the contest is completed and the scores " +
-//                     "reported can be considered final.")
+    @Schema(//position = 5,
+            description = "This value will be true when the contest is completed and the scores " +
+                    "reported can be considered final.")
     private boolean completed;
 
     @JsonProperty(required = true)
-//     @Schema(//position = 1,
-//             description = "Name of the home team in the contest.")
+    @Schema(//position = 1,
+            description = "Name of the home team in the contest.")
     private String homeTeam;
 
     @JsonProperty(required = true)
-//     @Schema(//position = 2,
-//             description = "Name of the away team in the contest.")
+    @Schema(//position = 2,
+            description = "Name of the away team in the contest.")
     private String awayTeam;
 
     @JsonProperty(required = false)
-//     @Schema(//position = 5,
-//             example = "2",
-//             description = "Home team score. This will not be valid and may not be " +
-//                     "supplied prior to the scheduled start time and not complete " +
-//                     "until the completed field is set to true.")
+    @Schema(//position = 5,
+            example = "2",
+            description = "Home team score. This will not be valid and may not be " +
+                    "supplied prior to the scheduled start time and not complete " +
+                    "until the completed field is set to true.")
     private Integer homeScore;
 
      @JsonProperty(required = false)
-//     @Schema(//position = 6,
-//             example = "1",
-//             description = "Away team score. This will not be valid and may not be " +
-//                     "supplied prior to the scheduled start time and not complete " +
-//                     "until the completed field is set to true.")
+    @Schema(//position = 6,
+            example = "1",
+            description = "Away team score. This will not be valid and may not be " +
+                    "supplied prior to the scheduled start time and not complete " +
+                    "until the completed field is set to true.")
     private Integer awayScore;
 
     @EqualsAndHashCode.Include

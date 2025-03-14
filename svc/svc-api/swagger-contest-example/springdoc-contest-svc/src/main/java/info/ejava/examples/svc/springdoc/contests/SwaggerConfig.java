@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
-// @Configuration
-// @EnableConfigurationProperties(SwaggerConfig.SwaggerConfiguration.class)
-// @ConditionalOnProperty(name = "test", havingValue = "false", matchIfMissing = true)
+@Configuration
+@EnableConfigurationProperties(SwaggerConfig.SwaggerConfiguration.class)
+@ConditionalOnProperty(name = "test", havingValue = "false", matchIfMissing = true)
 public class SwaggerConfig {
 
     @ConfigurationProperties("api.swagger")

@@ -1,0 +1,445 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Springdoc Swagger Contest Example",
+      "description": "This application provides an example of how to provide extra swagger and springfox configuration in order to better document the API.",
+      "contact": {
+        "name": "Jim Stafford",
+        "url": "https://jcs.ep.jhu.edu/ejava-springboot"
+      },
+      "version": "v1"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Generated server url"
+      }
+    ],
+    "tags": [
+      {
+        "name": "contest-controller",
+        "description": "manages contests"
+      }
+    ],
+    "paths": {
+      "/api/contests/{contestId}": {
+        "get": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "Returns the specified contest.",
+          "operationId": "getContest",
+          "parameters": [
+            {
+              "name": "contestId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The contest requested is returned.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContestDTO"
+                  }
+                },
+                "application/xml": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContestDTO"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "The contest requested could not be found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                },
+                "application/xml": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "Update an existing contest -- perhaps to schedule it or report scores.",
+          "operationId": "updateContest",
+          "parameters": [
+            {
+              "name": "contestId",
+              "in": "path",
+              "description": "id of contest",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "example": 1
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContestDTO"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContestDTO"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "The specified contest was successfully updated."
+            },
+            "404": {
+              "description": "The specified contest did not exist.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "There was an error implementing the update.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "This method will delete the specified contest. There is no error if the ID does not exist. There will only be an error when we fail to delete it.",
+          "operationId": "deleteContest",
+          "parameters": [
+            {
+              "name": "contestId",
+              "in": "path",
+              "description": "id of contest",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "example": 1
+            }
+          ],
+          "responses": {
+            "500": {
+              "description": "There was an error implementing the delete.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                }
+              }
+            },
+            "204": {
+              "description": "Specified contest was deleted or it did not exist."
+            }
+          }
+        },
+        "head": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "This method simply checks whether the contest exists.",
+          "operationId": "doesContestExist",
+          "parameters": [
+            {
+              "name": "contestId",
+              "in": "path",
+              "description": "id of contest",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "example": 1
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The specified contest exists."
+            },
+            "404": {
+              "description": "The specified contest does not exist."
+            }
+          }
+        }
+      },
+      "/api/contests": {
+        "get": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "This endpoint will return a collection of contests based on the paging values assigned",
+          "operationId": "getContests",
+          "parameters": [
+            {
+              "name": "offset",
+              "in": "query",
+              "description": "optional, server will set to \"no offset\" if not supplied or 0",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              },
+              "example": 0
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "optional, server will set to no limit if not supplied or 0",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              },
+              "example": 0
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The contests requested are returned with page metadata assigned.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContestListDTO"
+                  }
+                },
+                "application/xml": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContestListDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "This endpoint will create a new contest. Home and Away teams are required, id is ignored, and most other fields are optional.",
+          "operationId": "createContest",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContestDTO"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContestDTO"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "The contest has been successfully created and an ID assigned.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContestDTO"
+                  }
+                },
+                "application/xml": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContestDTO"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "An invalid property value was provided in the contest.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                },
+                "application/xml": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "contest-controller"
+          ],
+          "summary": "This method will delete all contests.",
+          "operationId": "deleteAllContests",
+          "responses": {
+            "500": {
+              "description": "There was an error implementing the delete.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessageDTO"
+                  }
+                }
+              }
+            },
+            "204": {
+              "description": "All contests were deleted."
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "MessageDTO": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The URL that generated the message."
+            },
+            "text": {
+              "type": "string",
+              "description": "The text of the message."
+            },
+            "date": {
+              "type": "string",
+              "description": "The date (UTC) of the generated message.",
+              "format": "date-time"
+            }
+          },
+          "description": "This class is used to convey a generic message -- usually the result of an error."
+        },
+        "ContestDTO": {
+          "required": [
+            "awayTeam",
+            "completed",
+            "homeTeam"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "A read-only ID assigned by the service during create.",
+              "format": "int32",
+              "readOnly": true,
+              "example": 0
+            },
+            "scheduledStart": {
+              "type": "string",
+              "description": "Scheduled or completed contests should have a scheduled started time expressed in LocalDateTime with offset from UTC.",
+              "format": "date-time"
+            },
+            "duration": {
+              "type": "string",
+              "example": "PT120M"
+            },
+            "completed": {
+              "type": "boolean",
+              "description": "This value will be true when the contest is completed and the scores reported can be considered final."
+            },
+            "homeTeam": {
+              "type": "string",
+              "description": "Name of the home team in the contest."
+            },
+            "awayTeam": {
+              "type": "string",
+              "description": "Name of the away team in the contest."
+            },
+            "homeScore": {
+              "type": "integer",
+              "description": "Home team score. This will not be valid and may not be supplied prior to the scheduled start time and not complete until the completed field is set to true.",
+              "format": "int32",
+              "example": 2
+            },
+            "awayScore": {
+              "type": "integer",
+              "description": "Away team score. This will not be valid and may not be supplied prior to the scheduled start time and not complete until the completed field is set to true.",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "description": "The new contest to be added."
+        },
+        "ContestListDTO": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "integer",
+              "description": "Offset from the beginning of the collection of contests on the server.",
+              "format": "int32",
+              "example": 0
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of elements the page was originally requested to have.",
+              "format": "int32",
+              "example": 0
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of contests that are available, that matched the original query but may not have been returned because of paging limits set.",
+              "format": "int32",
+              "example": 0
+            },
+            "keywords": {
+              "type": "string",
+              "description": "Used as a description of the query used to obtain the contests.",
+              "example": "homeTeam=Sharks"
+            },
+            "contests": {
+              "type": "array",
+              "description": "${api.model.ContestListDTO.contests}",
+              "items": {
+                "$ref": "#/components/schemas/ContestDTO"
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "The number of elements in the contest field.",
+              "format": "int32",
+              "example": 0
+            }
+          },
+          "description": "This class represents a page of contests."
+        }
+      }
+    }
+  }

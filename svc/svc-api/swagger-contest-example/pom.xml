@@ -19,6 +19,6 @@
     <modules>
         <module>springdoc-contest-client</module>
         <module>springdoc-contest-svc</module>
-        <!-- <module>generated-contest-client</module>  -->
+        <module>generated-contest-client</module>
     </modules>
 </project>
