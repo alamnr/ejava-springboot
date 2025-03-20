@@ -27,6 +27,7 @@
     Section - contents of a chapter
     -->
     <modules>
+        <module>app</module>
         <module>svc</module>  
         <module>common</module>      
     </modules>

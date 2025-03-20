@@ -11,8 +11,7 @@
 
     <name>Services::API::Content Quotes::Service</name>
     <description>
-        This project provides an example of content marshalling
-        and negotiation.
+        This project provides an example of content marshalling  and negotiation.
     </description>
 
     <dependencies>
