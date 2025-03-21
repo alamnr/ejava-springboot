@@ -20,6 +20,7 @@
     <module>appconfig-beanfactory-example</module>
     <module>appconfig-xmlconfig-example</module>
     <module>appconfig-propertysource-example</module>
+    <module>appconfig-configproperties-example</module>
 </modules>
 
 </project>
