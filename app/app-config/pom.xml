@@ -22,6 +22,7 @@
     <module>appconfig-propertysource-example</module>
     <module>appconfig-configproperties-example</module>
     <module>appconfig-autoconfig-example</module>
+    <module>hello-starter</module>
 </modules>
 
 </project>
