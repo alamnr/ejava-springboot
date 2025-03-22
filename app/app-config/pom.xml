@@ -21,6 +21,7 @@
     <module>appconfig-xmlconfig-example</module>
     <module>appconfig-propertysource-example</module>
     <module>appconfig-configproperties-example</module>
+    <module>appconfig-autoconfig-example</module>
 </modules>
 
 </project>
