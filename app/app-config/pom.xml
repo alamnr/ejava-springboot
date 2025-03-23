@@ -23,6 +23,7 @@
     <module>appconfig-configproperties-example</module>
     <module>appconfig-autoconfig-example</module>
     <module>hello-starter</module>
+    <module>appconfig-logging-example</module>
 </modules>
 
 </project>

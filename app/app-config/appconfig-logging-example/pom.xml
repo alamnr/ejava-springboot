@@ -8,43 +8,37 @@
         <version>6.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>appconfig-autoconfig-example</artifactId>
-    <name>App::Config::Auto Configuration Example</name>
-    <description>
-        This project provides an example of  spring boot  auto configuration
-        take help from - https://www.sivalabs.in/how-springboot-autoconfiguration-magic/
-    </description>
-
+    <artifactId>appconfig-logging-example</artifactId>
+    <name>App:: Config:: Logging Example</name>
+    <description>This project provides an example of how to implement logging</description>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
+        <!-- Used to declare logger -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- this module has a concrete dependency on HelloStdOut -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hello-service-stdout</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- added to inspect env -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
     </dependencies>
 
-    
+     <profiles>
+        <!-- standard logback logging activated by default by starter-logging -->
+        <profile>
+            <id>logback</id>
+            <activation>
+                <property>
+                    <name>!logger</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
+
 <build>
         <plugins>
             <plugin>
@@ -63,3 +57,4 @@
         </plugins>
     </build>
 </project>
+
