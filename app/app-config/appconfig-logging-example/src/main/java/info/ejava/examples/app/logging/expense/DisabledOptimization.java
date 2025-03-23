@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@Profile("expense")
+
 public class DisabledOptimization implements CommandLineRunner {
     private static final boolean DEBUG_ENABLED = log.isDebugEnabled();
 

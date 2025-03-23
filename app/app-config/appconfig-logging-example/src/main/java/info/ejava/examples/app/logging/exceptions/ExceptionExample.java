@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@Profile("exceptions")
+
 public class ExceptionExample implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {

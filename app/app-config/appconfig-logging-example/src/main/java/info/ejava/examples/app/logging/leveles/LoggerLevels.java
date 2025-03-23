@@ -1,4 +1,4 @@
-package info.ejava.examples.app.logging.command;
+package info.ejava.examples.app.logging.leveles;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-@Profile("levels")
+
 public class LoggerLevels implements CommandLineRunner {
 
     private static final boolean DEBUG_ENABLED = log.isDebugEnabled();

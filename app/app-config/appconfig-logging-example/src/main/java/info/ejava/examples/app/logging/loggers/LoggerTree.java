@@ -1,4 +1,4 @@
-package info.ejava.examples.app.logging.tree;
+package info.ejava.examples.app.logging.loggers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-//@Profile("!rollover")
-@Profile("tree")
+@Profile("!rollover")
 public class LoggerTree implements CommandLineRunner {
     private static final Logger[] loggers = {
             LoggerFactory.getLogger("X"),
