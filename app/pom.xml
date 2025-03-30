@@ -18,6 +18,7 @@
 
 <modules>
     <module>app-config</module>
+    <module>app-testing</module>
 </modules>
 
 

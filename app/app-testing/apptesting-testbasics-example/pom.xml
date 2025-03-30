@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>info.ejava.examples.app</groupId>
+        <artifactId>app-testing</artifactId>
+        <version>6.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>apptesting-testbasics-example</artifactId>
+    <name>App:: Testing :: Test Basics Exaple</name>
+    <description>
+        This project provides example to setup different types of technical tests using
+        JUnit, Mockito, assertion libraries and Spring Boot
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- for hamcrest date comparison -->
+        <dependency>
+            <groupId>org.exparity</groupId>
+            <artifactId>hamcrest-date</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+<build>
+        <plugins>
+            <!-- generate custom AssertJ assertions -->
+            <!-- <plugin>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+                <configuration>
+                    <classes>
+                        <param>info.ejava.examples.app.testing.testbasics.Person</param>
+                    </classes>
+                    <templates> -->
+                        <!-- local customizations -->
+                        <!-- <templatesDirectory>${basedir}/src/test/resources/templates/</templatesDirectory>
+                        <bddEntryPointAssertionClass>ejava_bdd_assertions_entry_point_class_template.txt</bddEntryPointAssertionClass> -->
+                        <!-- Spriong Boot 3.x / AspectJ jakarta customizations -->
+                        <!-- https://github.com/assertj/assertj-assertions-generator-maven-plugin/issues/93 -->
+                        <!-- <assertionClass>jakarta_custom_assertion_class_template.txt</assertionClass>
+                        <assertionsEntryPointClass>jakarta_standard_assertions_entry_point_class_template.txt</assertionsEntryPointClass>
+                        <hierarchicalAssertionAbstractClass>jakarta_custom_abstract_assertion_class_template.txt</hierarchicalAssertionAbstractClass>
+                        <hierarchicalAssertionConcreteClass>jakarta_custom_hierarchical_assertion_class_template.txt</hierarchicalAssertionConcreteClass>
+                        <softEntryPointAssertionClass>jakarta_soft_assertions_entry_point_class_template.txt</softEntryPointAssertionClass>
+                        <junitSoftEntryPointAssertionClass>jakarta_junit_soft_assertions_entry_point_class_template.txt</junitSoftEntryPointAssertionClass>
+                    </templates>
+                </configuration>
+            </plugin> -->
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>run-application</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
