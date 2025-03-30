@@ -11,7 +11,7 @@ import info.ejava.examples.app.testing.testbasics.Person;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AspectJAssertionsTest {
+public class AssertJAssertionsTest {
 
     Person beaver = PeopleFactory.beaver();
     Person wally = PeopleFactory.wally();
