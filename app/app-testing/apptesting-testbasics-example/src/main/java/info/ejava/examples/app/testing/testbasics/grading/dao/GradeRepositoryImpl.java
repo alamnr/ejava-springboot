@@ -6,8 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import info.ejava.examples.app.testing.testbasics.grading.bo.StudentGrade;
 
+@Repository
 public class GradeRepositoryImpl implements GradeRepository {
 
     Map<String, List<StudentGrade>> grades = new HashMap<>();
