@@ -79,24 +79,25 @@ JHU VPN (Open Pulse Secure) — workarounds are available
 
 - Testcontainers
 
-#Grading
+## Grading
+
 100 >= A >= 90 > B >= 80 > C >= 70 > F
 
-##Assessment                                       % of Semester Grade
+## Assessment                          -             % of Semester Grade
 
-Class/Newsgroup Participation                      10% (9pm EST, Wed weekly cut-off)
+Class/Newsgroup Participation          -           10% (9pm EST, Wed weekly cut-off)
 
-Assignment 0: Application Build                    5% (##)
+Assignment 0: Application Build        -           5% (##)
 
-Assignment 1: Application Config                   20%
+Assignment 1: Application Config       -           20%
 
-Assignment 2: Web API                              15%
+Assignment 2: Web API                 -            15%
 
-Assignment 3: Security                             15%
+Assignment 3: Security                -            15%
 
-Assignment 4: Integration Testing and Containers   10%
+Assignment 4: Integration Testing and Containers - 10%
 
-Assignment 5: Database                             25%
+Assignment 5: Database                 -           25%
 
 Do not host your course assignments in a public Internet repository.
 Course assignments should not be posted in a public Internet repository. If using an Internet repository, only the instructor should have access.
