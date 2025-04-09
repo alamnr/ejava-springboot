@@ -1,5 +1,6 @@
 package info.ejava.examples.app.hello;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -9,8 +10,9 @@ import org.springframework.context.annotation.Configuration;
 
 import info.ejava.examples.app.hello.stdout.StdOutHello;
 
-@Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(StdOutHello.class)
+//@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
+//@ConditionalOnClass(StdOutHello.class)
 @EnableConfigurationProperties(HelloProperties.class)
 public class HelloAutoConfiguration {
     

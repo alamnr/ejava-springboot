@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Primary;
 
 import info.ejava.examples.app.config.auto.conditional.DatabaseType;
 import info.ejava.examples.app.config.auto.conditional.MongoDatabaseTypeCondition;
@@ -25,26 +26,27 @@ public class StarterConfiguredApp {
         SpringApplication.run(StarterConfiguredApp.class, args);
     }
 
-    @Bean
-    @ConditionalOnProperty(prefix = "hello", name = "quiet", havingValue = "true")
-    public Hello quiteHello() {
-        return new StdOutHello("hello.quiet property condition set, Application @Bean says hi");
-    }
+   
+
+    // @Bean
+    // public Hello hello() {
+    //     return new StdOutHello("Application Bean Says Hey ");
+    // }
 
     //@Bean
     //@Conditional(MysqlDatabaseTypeCondition.class)
     //@Conditional(MongoDriverNotPresentsCondition.class)
-    public UserDao getJdbcUserDao() {
-        return new JdbcUserDao();
-    }
+    // public UserDao getJdbcUserDao() {
+    //     return new JdbcUserDao();
+    // }
 
-    @Bean
+    //@Bean
     //@Conditional(MongoDatabaseTypeCondition.class)
     //@Conditional(MongoDriverPresentsCondition.class)
     //@Conditional(UserDAOBeanNotPresentsCondition.class)
     //@Conditional(MongoDbTypePropertyCondition.class)
-    @DatabaseType("MONGO")
-    public UserDao getMongoUserDao() {
-        return new MongoUserDao();
-    }
+    //@DatabaseType("MONGO")
+    // public UserDao getMongoUserDao() {
+    //     return new MongoUserDao();
+    // }
 }

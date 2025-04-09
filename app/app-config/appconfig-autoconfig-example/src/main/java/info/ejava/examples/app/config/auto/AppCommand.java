@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class AppCommand implements CommandLineRunner {
 
     
-    private  final UserDao userDao;
+    //private  final UserDao userDao;
     private final Hello greeter;
 
     // public AppCommand(@Nullable UserDao dao, Hello greeter){
@@ -23,10 +23,10 @@ public class AppCommand implements CommandLineRunner {
     // }
     @Override
     public void run(String... args) throws Exception {
-        if(userDao != null) {
-            userDao.getAllUserNames().forEach(a->System.out.println(a));
-            userDao.getAllUserNames().forEach(System.out::println);
-        }
+        // if(userDao != null) {
+        //     userDao.getAllUserNames().forEach(a->System.out.println(a));
+        //     userDao.getAllUserNames().forEach(System.out::println);
+        // }
 
         greeter.sayHello(" World");
         

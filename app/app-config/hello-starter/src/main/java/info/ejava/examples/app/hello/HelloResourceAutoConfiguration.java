@@ -12,11 +12,11 @@ import info.ejava.examples.app.hello.stdout.StdOutHello;
 //==> wraps @Configuration + @AutoConfigurationBefore/After
 //@Configuration(proxyBeanMethods = false)
 //@AutoConfigureBefore(HelloAutoConfiguration.class)
-@ConditionalOnClass(StdOutHello.class)
+//@ConditionalOnClass(StdOutHello.class)
 @ConditionalOnResource(resources = "file:./hello.properties")
 public class HelloResourceAutoConfiguration {
     @Bean
-    @Primary
+    //@Primary
     public Hello resourceHello() {
         return new StdOutHello("hello.properties exists says hello");
     }
