@@ -44,10 +44,12 @@ public class ExampleMockitoTest {
         when(mapMock.get(stringArgCaptor.capture()))  // capture String argument
                 .thenReturn("springBoot","testing");
 
+
         // alternate syntax
         //doReturn("springBoot","testing").when(mapMock.get(stringArgCaptor.capture()));
 
         // conduct test
+        
         int size = mapMock.size();
         String secret1 = mapMock.get("happiness");
         String secret2 = mapMock.get("joy");
@@ -68,8 +70,36 @@ public class ExampleMockitoTest {
         Assertions.assertThat(secret1).as("unexpected first result").isEqualTo("springBoot");
         Assertions.assertThat(secret2).as("unexpected second result").isEqualTo("testing");
 
-        // mapMock.size() returned 0 while mapMock.get() returned values. We defined behavior
-        // for mapMock.get() but left other interface methods in their default, "nice mock" state.
+        // mapMock.size() returned 0 while mapMock.get() returned values. 
+        // We defined behavior for mapMock.get() but left other interface methods in their default, "nice mock" state.
+    }
+
+    @Test
+    public void list_map_1() {
+        // when
+        BDDMockito.when(mapMock.get(stringArgCaptor.capture())).thenReturn("springboot", "test");
+        //BDDMockito.doReturn("springboot", "test").when(mapMock.get(stringArgCaptor.capture()));
+        BDDMockito.when(mapMock.size()).thenReturn(2);
+        //BDDMockito.doReturn(2).when(mapMock.size());
+
+        // conduct test
+        int size = mapMock.size();
+        String secret1 = mapMock.get("hi");
+        String secret2 = mapMock.get("hello");
+
+        // evaluste result
+        // verify
+        BDDMockito.verify(mapMock, times(1)).size(); // verify that mapMock.size() called once
+        BDDMockito.verify(mapMock, times(2)).get(anyString()); // verify that mapMock.get() called twice
+
+        // check the argument passed to the mock
+        Assertions.assertThat(stringArgCaptor.getAllValues().get(0)).isEqualTo("hi");
+        Assertions.assertThat(stringArgCaptor.getAllValues().get(1)).isEqualTo("hello");
+
+        // check the value returned
+        Assertions.assertThat(secret1).as("does not match").isEqualTo("springboot");
+        Assertions.assertThat(secret2).as("value does not match").isEqualTo("test");
+ 
     }
 
     @Test
