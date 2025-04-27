@@ -174,5 +174,30 @@ public class ExampleMockitoTest {
              BDDAssertions.and.then(secret1).as("unexpected first result").isEqualTo("springboot");
              BDDAssertions.and.then(secret2).as("unexpected second result").isEqualTo("testing");
         }
+
+        @Test 
+        public void returns_value_with_map_size_mocking() {
+            // given
+            BDDMockito.given(mapMock.get(stringArgCaptor.capture()))  // capturing input
+                .willReturn("springboot","testing");
+            BDDMockito.given(mapMock.size()).willReturn(2);
+            
+            // when
+            int size = mapMock.size();
+            String secret1 = mapMock.get("happiness");
+            String secret2 = mapMock.get("joy");
+
+             //then - can use static import for BDDMockito or BDDAssertions, not both
+             BDDMockito.then(mapMock).should(times(1)).size(); // verify called once
+             BDDMockito.then(mapMock).should(times(2)).get(anyString());  // verify called twice
+
+             //and.then requires aspectj-core 3.14.0
+             BDDAssertions.and.then(stringArgCaptor.getAllValues().get(0)).isEqualTo("happiness");
+             BDDAssertions.and.then(stringArgCaptor.getAllValues().get(1)).isEqualTo("joy");
+             BDDAssertions.and.then(size).as("unexpevted size").isEqualTo(2);
+             BDDAssertions.and.then(secret1).as("unexpected first result").isEqualTo("springboot");
+             BDDAssertions.and.then(secret2).as("unexpected second result").isEqualTo("testing");
+        }
+
     }
 }

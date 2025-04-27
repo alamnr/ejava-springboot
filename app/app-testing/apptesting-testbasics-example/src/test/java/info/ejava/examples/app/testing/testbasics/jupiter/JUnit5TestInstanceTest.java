@@ -19,16 +19,16 @@ public class JUnit5TestInstanceTest {
 
         @BeforeAll
         static void init(){
-            log.info("state = {}", staticState++);
+            log.info("state init = {}", staticState++);
         }
         @Test
         void testA() {
-            log.info("state = {}", staticState);
+            log.info("state testA = {}", staticState);
         }
 
         @Test
         void testB() {
-            log.info("state = {}", staticState);
+            log.info("state testB = {}", staticState);
         }
 
     }
@@ -41,15 +41,15 @@ public class JUnit5TestInstanceTest {
         public InstanceShared() { log.info("new instance"); }
         @BeforeAll
         void init() {
-            log.info("state={}", instanceState++);
+            log.info("state init={}", instanceState++);
         }
         @Test
         void testA() {
-            log.info("state={}", instanceState);
+            log.info("state testA ={}", instanceState);
         }
         @Test
         void testB() {
-            log.info("state={}", instanceState);
+            log.info("state testB ={}", instanceState);
         }
 
 
