@@ -1,0 +1,59 @@
+package info.ejava.examples.svc.rpc.greeter;
+
+import org.assertj.core.api.BDDAssertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import info.ejava.examples.svc.rpc.GreeterApplication;
+import lombok.extern.slf4j.Slf4j;
+
+/*
+ * This class provides a simple example of using WebClient as a 
+ * fluent API, synchronous replacement of RestTemplate 
+ */
+
+ @SpringBootTest(classes = {GreeterApplication.class,ClientTestConfiguration.class},
+                    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@Tag("springboot") @Tag("greeter")
+@Slf4j
+public class GreeterSyncWebClientNTest {
+    
+    @LocalServerPort 
+    private int port; // initialization of way1
+    private String baseUrl; // initialize in test setup
+    private WebClient webClient; // initialize in setup
+
+    @Autowired @Qualifier("baseUrl") // @Qualifier makes bean selection more explicit
+    private String injectedBaseUrl; // Initialize in test config using way3
+    @Autowired
+    private WebClient injectedWebClient; // Injected from test configuration
+
+    @BeforeEach
+    void init(@LocalServerPort int port){ // injection ortion way2
+        baseUrl = String.format("http://localhost:%d/rpc/greeter", port);
+        webClient = WebClient.builder().build();
+    }
+
+    @Test
+    void say_hi(){
+        // given / arrange - an endpoint url to access the service
+        String endPointUrl = String.format("http://localhost:%d/rpc/greeter/sayHai", port);
+        WebClient webClient = WebClient.builder().build();
+
+        // when / act -  call the service
+        String response = webClient.get().uri(endPointUrl).retrieve().bodyToMono(String.class).block();
+        // block() causes the reactive flow definition to begin producing data
+
+        // then / evaluate 
+        BDDAssertions.then(response).isEqualTo("hi");
+    }
+}

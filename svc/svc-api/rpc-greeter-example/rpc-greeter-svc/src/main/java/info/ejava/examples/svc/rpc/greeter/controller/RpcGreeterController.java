@@ -30,7 +30,7 @@ public class RpcGreeterController {
                      @PathVariable("greeting") String greeting,
                      @RequestParam(value = "name", defaultValue = "you")String name) {
             
-            return String.format("{} , {}", greeting,name);
+            return String.format("%s , %s", greeting,name);
 
      }
 
