@@ -1,6 +1,7 @@
 package info.ejava.examples.svc.rpc.greeter;
 
 import org.assertj.core.api.BDDAssertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
@@ -22,9 +24,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.client.support.RestTemplateAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import info.ejava.examples.svc.rpc.GreeterApplication;
 import lombok.extern.slf4j.Slf4j;
@@ -48,9 +55,15 @@ public class GreeterHttpIfaceNTest {
 
     @Autowired @Qualifier("baseUrl") // @Qualifier makes bean selection mor explicit
     private String injectedBaseUrl; // injected from test configuration
-    @Autowired
-    private GreeterApi injectedGreeterApi;  // injected from test configuration
+    @Autowired @Qualifier("webClientHttpIface") 
+    private GreeterApi injectedGreeterApiWebClient;  // injected from test configuration
+    @Autowired  @Qualifier("restClientHttpIface")
+    private GreeterApi injectedGreeterApiRestClient;  // injected from test configuration
 
+    @Autowired  @Qualifier("restTemplateHttpIface")
+    private GreeterApi injectedGreeterApiRestTemplate;  // injected from test configuration
+   
+   
     @BeforeEach
     void init(@LocalServerPort int port) { // injection of port in way2
         baseUrl = String.format("http://localhost:%d/rpc/greeter/", port);
@@ -131,15 +144,81 @@ public class GreeterHttpIfaceNTest {
     }
 
     @Test
-    void boom(){
+    void boomWithRestTemplate(){
+
+        // given / arrange
+        
+        // when / act 
+        ResponseEntity<String> response =  injectedGreeterApiRestTemplate.boom();
+       
+        
+        // then  /  evaluate / assert
+        BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        BDDAssertions.then(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
+        
+
+        Assertions.assertDoesNotThrow(()->{
+            ResponseEntity<String> response_2 = injectedGreeterApiRestTemplate.boom();
+            //then - we get a bad request
+            BDDAssertions.then(response_2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            BDDAssertions.then(response_2.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
+          },"return response, not exception");
+          
+    }
+    @Test
+    void boomWithRestClient(){
 
         // given / arrange
 
         // when / act 
-        RestClientResponseException ex = BDDAssertions.catchThrowableOfType(() -> greeterApi.boom(), HttpClientErrorException.class);
+        RestClientResponseException ex = BDDAssertions.catchThrowableOfType(() -> injectedGreeterApiRestClient.boom(), HttpClientErrorException.class);
+        
+        // then  /  evaluate / assert
+        BDDAssertions.then(ex.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        
+         ex.getResponseHeaders().forEach((k,v) -> {
+            log.info("Header - {}", k);
+            v.forEach(value -> log.info("value - {}",value));
+        });
+         
+        log.info("resp body - {}",ex.getResponseBodyAsString());
+        try {
+            ErrorMessage parsedErrMsg = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorMessage.class);
+            log.info("parsed Error message - {}", parsedErrMsg);
+        } catch (JsonProcessingException e) {
+            log.error("error parsing - ", e);
+            
+        }
+    }
+    @Test
+    void boomWithWebClient(){
+
+        // given / arrange
+
+        // when / act 
+             
+        //unfortunately, WebClient exceptions are technically different than the others and would need separate exception handling
+        // logic if used together.
+        WebClientResponseException ex = BDDAssertions.catchThrowableOfType(() -> injectedGreeterApiWebClient.boom(), WebClientResponseException.class);
 
         // then  /  evaluate / assert
         BDDAssertions.then(ex.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        
+        ex.getHeaders().forEach((k,v) -> {
+            log.info("Header - {}", k);
+            v.forEach(value -> log.info("value - {}",value));
+        }); 
+        
+        log.info("resp body - {}",ex.getResponseBodyAsString());
+        try {
+            ErrorMessage parsedErrMsg = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorMessage.class);
+            log.info("parsed Error message - {}", parsedErrMsg);
+        } catch (JsonProcessingException e) {
+            log.error("error parsing - ", e);
+            
+        }
     }
+
+
 
 }
