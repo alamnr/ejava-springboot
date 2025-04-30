@@ -21,4 +21,10 @@ public interface GreeterApi {
 
     @GetExchange("/boom")
     ResponseEntity<String> boom(@RequestParam(value = "value",required = true)String value); // this will work when given a value
+
+    @GetExchange("/boys")
+    ResponseEntity<String> createBoy(@RequestParam("name")String name); // no exception with param except name  = blue
+
+    @GetExchange("/boys")
+    ResponseEntity<String> createBoy(); // without param throws exception
 }

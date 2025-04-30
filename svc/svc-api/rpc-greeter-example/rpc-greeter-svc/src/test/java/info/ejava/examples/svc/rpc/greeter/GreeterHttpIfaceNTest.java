@@ -31,6 +31,7 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import info.ejava.examples.svc.rpc.GreeterApplication;
@@ -144,7 +145,7 @@ public class GreeterHttpIfaceNTest {
     }
 
     @Test
-    void boomWithRestTemplate(){
+    void boom_with_rest_template(){
 
         // given / arrange
         
@@ -166,7 +167,7 @@ public class GreeterHttpIfaceNTest {
           
     }
     @Test
-    void boomWithRestClient(){
+    void boom_with_rest_client(){
 
         // given / arrange
 
@@ -191,7 +192,7 @@ public class GreeterHttpIfaceNTest {
         }
     }
     @Test
-    void boomWithWebClient(){
+    void boom_with_web_client(){
 
         // given / arrange
 
@@ -218,6 +219,59 @@ public class GreeterHttpIfaceNTest {
             
         }
     }
+
+    @Test
+    void boy_without_param(){
+        // given / arrange
+
+        // when / act
+        RestClientResponseException ex = BDDAssertions.catchThrowableOfType(()->injectedGreeterApiRestClient.createBoy(),
+                                                        HttpClientErrorException.class);
+
+        // then / evaluate/assert
+        BDDAssertions.then(ex.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        BDDAssertions.then(ex.getResponseHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
+        try {
+            ErrorMessage err = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorMessage.class);
+            log.info("parsed / unmarshall json string to object - {}", err);
+        } catch (JsonMappingException e) {
+            log.error("Parse Error  -",   e);
+        } catch (JsonProcessingException e) {
+            log.error("Parse Error  -",   e);
+        }
+
+    }
+
+    @Test
+    void boy_with_param_except_blue(){
+        // given / arrange
+
+        // when / act
+        ResponseEntity<String> resp = injectedGreeterApiRestClient.createBoy("Jim");
+
+        // then / Assert/evaluate
+        BDDAssertions.then(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        BDDAssertions.then(resp.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).contains("text/plain");
+        BDDAssertions.then(resp.getBody()).contains("how do you do ?");
+    }
+
+    @Test
+    void boy_with_param_having_blue(){
+        // given / arrange
+
+        // when / act
+        RestClientResponseException ex = BDDAssertions.catchThrowableOfType(()->injectedGreeterApiRestClient.createBoy("blue"),
+                                                    HttpClientErrorException.class);
+
+        // then / assert / evaluate
+        log.error("error - ",ex.getResponseBodyAsString());
+        BDDAssertions.then(ex.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        BDDAssertions.then(ex.getResponseHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).contains(MediaType.TEXT_PLAIN.toString());
+        BDDAssertions.then(ex.getResponseHeaders().getFirst(HttpHeaders.CONTENT_LOCATION))
+        .isNull();
+        BDDAssertions.then(ex.getResponseBodyAsString()).isEqualTo("boy named blue");
+    }
+
 
 
 
