@@ -1,25 +1,26 @@
 package info.ejava.examples.common.dto;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public abstract class DtoUtil {
+    public static final String DATE_FORMAT="yyyy-MM-dd";
+    public static final String DATETIME_FORMAT="yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
-    // String
-    public <T> String marshall(T object) {
+    //String
+    public <T> String marshal(T object) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        marshal(object,os);
+        marshal(object, os);
         return os.toString();
+    }
+    public <T> T unmarshal(String text, Class<T> type) {
+        InputStream is = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+        T object = unmarshal(is, type);
+        return object;
     }
 
     public <T> String marshalThrows(T object) throws IOException {
@@ -32,7 +33,6 @@ public abstract class DtoUtil {
         T object = unmarshalThrows(is, type);
         return object;
     }
-
 
     //byte[]
     public <T> byte[] marshalAsBytes(T object) {
@@ -48,7 +48,6 @@ public abstract class DtoUtil {
     }
 
 
-    
     //core implementation wrappers that do not throw exceptions
     public <T> void marshal(T object, OutputStream os) {
         try {
@@ -71,6 +70,4 @@ public abstract class DtoUtil {
     public abstract <T> T unmarshalThrows(InputStream is, Class<T> type) throws IOException;
 
     protected void init() {}
-
-    
 }

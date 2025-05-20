@@ -29,7 +29,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import info.ejava.examples.common.dto.JsonUtil;
 import info.ejava.examples.common.dto.MessageDTO;
 import info.ejava.examples.svc.content.quotes.api.QuotesApi;
-import info.ejava.examples.svc.content.quotes.client.QuotesApiClient;
+
+import info.ejava.examples.svc.content.quotes.client.QuotesApiWebClient;
 import info.ejava.examples.svc.content.quotes.dto.QuoteDTO;
 import info.ejava.examples.svc.content.quotes.dto.QuoteDTOFactory;
 import info.ejava.examples.svc.content.quotes.dto.QuoteListDTO;
@@ -42,13 +43,13 @@ import reactor.core.publisher.Mono;
 @ActiveProfiles("test")
 @Tag("springboot")
 @Slf4j
-public class QuoteClientNTest {
+public class QuoteWebClientNTest {
 
     @Autowired
     private QuoteDTOFactory quoteFactory;
 
     @Autowired
-    private QuotesApiClient quotesClient;
+    private QuotesApiWebClient quotesApiWebClient;
 
     @Autowired
     private URI baseUrl;
@@ -56,13 +57,13 @@ public class QuoteClientNTest {
     @BeforeEach
     public void setUp() {
         log.info("clearing all quotes");
-        quotesClient.deleteAllQuotes().block();
+        quotesApiWebClient.deleteAllQuotes().block();
     }
 
     @AfterEach
     public void cleanUp() {
         // cut down on logging noise
-        // quotesClient.deleteAllQuotes()
+        // quotesApiWebClient.deleteAllQuotes()
         int i=0;
     }
 
@@ -85,7 +86,7 @@ public class QuoteClientNTest {
         QuoteDTO validQuote = quoteFactory.make();
 
         // when - added  to the service  API
-        Mono<ResponseEntity<QuoteDTO>> request  = quotesClient.createQuote(validQuote);
+        Mono<ResponseEntity<QuoteDTO>> request  = quotesApiWebClient.createQuote(validQuote);
 
         // then - a resource was created
         ResponseEntity<QuoteDTO> response = request.block();
@@ -101,7 +102,7 @@ public class QuoteClientNTest {
 
     private QuoteDTO given_an_existing_quote() {
         QuoteDTO existingQuote = quoteFactory.make();
-        ResponseEntity<QuoteDTO> quoteResponse = quotesClient.createQuote(existingQuote).block();
+        ResponseEntity<QuoteDTO> quoteResponse = quotesApiWebClient.createQuote(existingQuote).block();
         BDDAssertions.assertThat(quoteResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         return quoteResponse.getBody();
     }
@@ -116,11 +117,11 @@ public class QuoteClientNTest {
         QuoteDTO updateQuote = existingQuote.withText(existingQuote.getText()+" Updated");
 
         // when - updating existing quote
-        ResponseEntity<Void> response = quotesClient.updateQuote(requestId, updateQuote).block();
+        ResponseEntity<Void> response = quotesApiWebClient.updateQuote(requestId, updateQuote).block();
 
         // then no exception was thrown and ...
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        ResponseEntity<QuoteDTO> quoteResponse = quotesClient.getQuote(requestId).block();
+        ResponseEntity<QuoteDTO> quoteResponse = quotesApiWebClient.getQuote(requestId).block();
         BDDAssertions.then(quoteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         BDDAssertions.then(quoteResponse.getBody()).isEqualTo(updateQuote);
         BDDAssertions.then(quoteResponse.getBody()).isNotEqualTo(existingQuote);
@@ -130,12 +131,12 @@ public class QuoteClientNTest {
     public void get_quote() {
         // given - an existing/original quote
         QuoteDTO existingQuoteDTO = given_an_existing_quote(); // hold onto the client side object
-        ResponseEntity<QuoteDTO> quoteResponse = quotesClient.createQuote(existingQuoteDTO).block();
+        ResponseEntity<QuoteDTO> quoteResponse = quotesApiWebClient.createQuote(existingQuoteDTO).block();
         BDDAssertions.assertThat(quoteResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         int requestId = quoteResponse.getBody().getId();
 
         // when - requesting quote by id
-        ResponseEntity<QuoteDTO> response = quotesClient.getQuote(requestId).block();
+        ResponseEntity<QuoteDTO> response = quotesApiWebClient.getQuote(requestId).block();
 
         // then 
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -147,7 +148,7 @@ public class QuoteClientNTest {
         List<QuoteDTO> quotes = new ArrayList<>(count);
         for(QuoteDTO quote: quoteFactory.listBuilder().quotes(count, count))
         {
-            ResponseEntity<QuoteDTO> response = quotesClient.createQuote(quote).block();
+            ResponseEntity<QuoteDTO> response = quotesApiWebClient.createQuote(quote).block();
             BDDAssertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             quotes.add(response.getBody());
         }
@@ -156,7 +157,7 @@ public class QuoteClientNTest {
         //            //create some quote POJOs
         //         .quotes(count, count))
         //             //define an async request and subscribe to returned Mono
-        //         .flatMap(quote -> quotesClient.createQuote(quote) )
+        //         .flatMap(quote -> quotesApiWebClient.createQuote(quote) )
         //             //flatMap waited for createQuote Mono to complete
         //             //verify status code returned and return body/quote with ID
         //         .map(response -> { //i.e., do work on completed result
@@ -178,7 +179,7 @@ public class QuoteClientNTest {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUri(baseUrl).replacePath(QuotesApi.QUOTE_PATH);
 
         // when - get random quote
-        ResponseEntity<QuoteDTO> response = quotesClient.randomeQuote().block();
+        ResponseEntity<QuoteDTO> response = quotesApiWebClient.randomeQuote().block();
 
         // then
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -195,14 +196,14 @@ public class QuoteClientNTest {
         // given 
         List<QuoteDTO> quotes = given_many_quotes(5);
         int requestId = quotes.get(1).getId();
-        BDDAssertions.assertThat(quotesClient.getQuote(requestId).block().getStatusCode()).isEqualTo(HttpStatus.OK);
+        BDDAssertions.assertThat(quotesApiWebClient.getQuote(requestId).block().getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // when - remove selected quote
-        ResponseEntity<Void> response = quotesClient.deleteQuote(requestId).block();
+        ResponseEntity<Void> response = quotesApiWebClient.deleteQuote(requestId).block();
 
         // then
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(() -> quotesClient.getQuote(requestId).block(), 
+         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(() -> quotesApiWebClient.getQuote(requestId).block(), 
                                                             WebClientResponseException.NotFound.class);
         BDDAssertions.assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -213,12 +214,12 @@ public class QuoteClientNTest {
         List<QuoteDTO> quotes = given_many_quotes(5);
 
         // when - requested to remove all quotes
-        ResponseEntity<Void> response = quotesClient.deleteAllQuotes().block();
+        ResponseEntity<Void> response = quotesApiWebClient.deleteAllQuotes().block();
         // then map should be cleared
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         for (QuoteDTO quote: quotes) {
             WebClientResponseException ex = BDDAssertions.catchThrowableOfType(
-                    ()->quotesClient.getQuote(quote.getId()).block(),
+                    ()->quotesApiWebClient.getQuote(quote.getId()).block(),
                     WebClientResponseException.NotFound.class);
             BDDAssertions.assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         }
@@ -232,7 +233,7 @@ public class QuoteClientNTest {
         int requestId = 13;
 
         //when - requested to remove, will not report that does not exist, because delete method is idempotent
-        ResponseEntity<Void> response = quotesClient.deleteQuote(requestId).block();
+        ResponseEntity<Void> response = quotesApiWebClient.deleteQuote(requestId).block();
 
         //then
         log.info("reponse : {}", response);
@@ -243,11 +244,11 @@ public class QuoteClientNTest {
     @Test
     public void get_random_quote_no_quotes() {
         //given - no quotes
-        BDDAssertions.assertThat((quotesClient.deleteAllQuotes()).block().getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        BDDAssertions.assertThat((quotesApiWebClient.deleteAllQuotes()).block().getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
         //then
         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(
-                ()->quotesClient.randomeQuote().block(),
+                ()->quotesApiWebClient.randomeQuote().block(),
                 WebClientResponseException.NotFound.class);
 
         //then
@@ -264,7 +265,7 @@ public class QuoteClientNTest {
 
         //when - requesting quote by id
         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(
-                ()->quotesClient.getQuote(unknownId).block(),
+                ()->quotesApiWebClient.getQuote(unknownId).block(),
                 WebClientResponseException.NotFound.class);
 
         //then
@@ -281,7 +282,7 @@ public class QuoteClientNTest {
 
         //verify - that updating existing quote
         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(
-                ()->quotesClient.updateQuote(unknownId, updatedQuote).block(),
+                ()->quotesApiWebClient.updateQuote(unknownId, updatedQuote).block(),
                 WebClientResponseException.NotFound.class);
 
         //then - exception was thrown and ...
@@ -298,7 +299,7 @@ public class QuoteClientNTest {
 
         //verify - that when updating quote
         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(
-                ()->quotesClient.updateQuote(knownId, badQuoteMissingText).block(),
+                ()->quotesApiWebClient.updateQuote(knownId, badQuoteMissingText).block(),
                 WebClientResponseException.UnprocessableEntity.class);
 
         //then - exection was thrown and ...
@@ -313,7 +314,7 @@ public class QuoteClientNTest {
 
         //verify
         UnprocessableEntity ex = BDDAssertions.catchThrowableOfType(
-                ()->quotesClient.createQuote(badQuoteMissingText).block(),
+                ()->quotesApiWebClient.createQuote(badQuoteMissingText).block(),
                 UnprocessableEntity.class);
 
         //then - a resource was created
@@ -329,7 +330,7 @@ public class QuoteClientNTest {
             @ConvertWith(IntegerConverter.class)Integer limit) {
         //when - requesting invalid offsets
         WebClientResponseException ex = BDDAssertions.catchThrowableOfType(
-                ()->quotesClient.getQuotes(offset, limit).block(),
+                ()->quotesApiWebClient.getQuotes(offset, limit).block(),
                 WebClientResponseException.BadRequest.class);
 
         //then - error was reported
@@ -350,7 +351,7 @@ public class QuoteClientNTest {
         //given we have no quotes
 
         //when - asked for amounts we do not have
-        ResponseEntity<QuoteListDTO> response = quotesClient.getQuotes(0, 100).block();
+        ResponseEntity<QuoteListDTO> response = quotesApiWebClient.getQuotes(0, 100).block();
         log.debug("{}", response);
 
         //then - the response will be empty
@@ -369,7 +370,7 @@ public class QuoteClientNTest {
         given_many_quotes(100);
 
         //when asking for a page of quotes
-        ResponseEntity<QuoteListDTO> response = quotesClient.getQuotes(10, 10).block();
+        ResponseEntity<QuoteListDTO> response = quotesApiWebClient.getQuotes(10, 10).block();
 
         //then - page of results returned
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.OK);

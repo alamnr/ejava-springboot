@@ -101,7 +101,7 @@ public class QuotesRestTemplateNTest {
         BDDAssertions.then(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         // and the content will be returned to us in the requested format
-        BDDAssertions.then(response.getHeaders().getContentType()).isEqualTo(acceptType);
+        BDDAssertions.then(response.getHeaders().getContentType()).isEqualTo(acceptType.toString());
 
         // that equals what we sent plus an ID generated
         QuoteDTO createdQuote = response.getBody();

@@ -21,7 +21,7 @@ import info.ejava.examples.common.web.RestTemplateLoggingFilter;
 
 import info.ejava.examples.common.webflux.WebClientLoggingFilter;
 import info.ejava.examples.svc.content.quotes.api.QuotesApi;
-import info.ejava.examples.svc.content.quotes.client.QuotesApiClient;
+import info.ejava.examples.svc.content.quotes.client.QuotesApiWebClient;
 import info.ejava.examples.svc.content.quotes.client.ServerConfig;
 import info.ejava.examples.svc.content.quotes.dto.QuoteDTOFactory;
 
@@ -75,13 +75,13 @@ public class ClientTestConfiguration {
 
     @Bean @Lazy
     @Qualifier("webClient")
-    public QuotesApiClient quotesWebClient(WebClient webClient, ServerConfig cfg) {
-        return new QuotesApiClient(webClient, cfg);
+    public QuotesApiWebClient quotesWebClient(WebClient webClient, ServerConfig cfg) {
+        return new QuotesApiWebClient(webClient, cfg);
     }
 
     @Bean @Lazy
-    public QuotesApiClient quotesClient(WebClient webClient, ServerConfig serverConfig) {
-        return new QuotesApiClient(webClient, serverConfig, MediaType.APPLICATION_JSON_VALUE);
+    public QuotesApiWebClient quotesClient(WebClient webClient, ServerConfig serverConfig) {
+        return new QuotesApiWebClient(webClient, serverConfig, MediaType.APPLICATION_JSON_VALUE);
     }
 
 
