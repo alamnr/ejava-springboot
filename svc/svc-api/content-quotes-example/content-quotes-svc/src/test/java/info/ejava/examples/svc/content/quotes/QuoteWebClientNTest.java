@@ -16,6 +16,7 @@ import org.junit.jupiter.params.converter.ArgumentConverter;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class QuoteWebClientNTest {
     @Autowired
     private QuoteDTOFactory quoteFactory;
 
-    @Autowired
+    @Autowired @Qualifier("webClient")
     private QuotesApiWebClient quotesApiWebClient;
 
     @Autowired

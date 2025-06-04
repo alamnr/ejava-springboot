@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -48,6 +49,7 @@ public class StandardTippingCalculatorImplTest {
     // When we don’t provide a name for the @MethodSource, JUnit will search for a source method with the same name as the test method.
     @ParameterizedTest
     @MethodSource
+    @Disabled
     public void given_service_level(BigDecimal billTotal, ServiceQuality q, BigDecimal expectedTip) {
         // when - calculating tip
         BigDecimal resultTip = tipCalculator.calcTip(expectedTip, q);

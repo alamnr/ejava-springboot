@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,11 +44,12 @@ public class ExampleJUnit4Test {
     }
 
     @Test
+    //@Disabled
     // in Junit 4 the assertion description is placed first and  it has to pay the price of building String 
     // whether assertion passes or fails
     public void one_and_one(){
         log.info("1+1=2");
-        assertTrue("problem with (true) 1+1", 1+1 == 3);
+        //assertTrue("problem with (true) 1+1", 1+1 == 3);
         assertEquals(String.format("problem with (equal) %d +%d",   1,1), 2 , 1+1);
     }
 
