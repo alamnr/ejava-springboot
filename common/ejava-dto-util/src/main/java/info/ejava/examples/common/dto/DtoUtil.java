@@ -15,7 +15,7 @@ public abstract class DtoUtil {
     public <T> String marshal(T object) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         marshal(object, os);
-        return os.toString();
+        return new String(os.toByteArray(),StandardCharsets.UTF_8);
     }
     public <T> T unmarshal(String text, Class<T> type) {
         InputStream is = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
