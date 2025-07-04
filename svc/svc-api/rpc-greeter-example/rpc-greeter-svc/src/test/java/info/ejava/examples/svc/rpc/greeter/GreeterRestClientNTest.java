@@ -2,7 +2,13 @@ package info.ejava.examples.svc.rpc.greeter;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Locale;
 
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Assertions;
@@ -107,8 +113,15 @@ public class GreeterRestClientNTest {
 
         BDDAssertions.then(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         BDDAssertions.then(resp.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).startsWith("text/plain");
-        BDDAssertions.then(resp.getHeaders().getFirst(HttpHeaders.CONTENT_LENGTH)).isEqualTo(9);
-        BDDAssertions.then(resp.getHeaders().getFirst(HttpHeaders.DATE)).isEqualTo(new Date());
+        BDDAssertions.then(resp.getHeaders().getFirst(HttpHeaders.CONTENT_LENGTH)).isEqualTo("9");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss O", Locale.ENGLISH);
+        Date date = new Date();
+        ZonedDateTime zdt = date.toInstant().atZone(ZoneOffset.UTC);
+        String formatted = formatter.format(zdt);
+
+        
+        BDDAssertions.then(resp.getHeaders().getFirst(HttpHeaders.DATE)).isEqualTo(formatted);
         BDDAssertions.then(resp.getBody()).isEqualTo("worked ? ");
         log.info("resp - {}", resp);
     }
