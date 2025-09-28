@@ -29,7 +29,7 @@
     <modules>
         <module>app</module>
         <module>svc</module>  
-        <module>common</module>      
+        <module>common</module>  
     </modules>
 
        <url>https://jcs.ep.jhu.edu/ejava-springboot</url>
