@@ -23,6 +23,7 @@
           <!-- IT testing without docker -->
           <module>failsafe-it-example</module>
           <module>failsafe-https-example</module>
+          <module>docker-hello-example</module>
           
     </modules>
 
