@@ -24,8 +24,46 @@
           <module>failsafe-it-example</module>
           <module>failsafe-https-example</module>
           <module>docker-hello-example</module>
-          
+          <module>dockercompose-it-example</module>          
     </modules>
+
+    <profiles>
+      <profile>
+          <id>docker</id>
+          <activation>
+            <file>
+              <exists>/var/run/docker.sock</exists>
+            </file>
+          </activation>
+          <modules>
+              <!-- Docker and IT with docker -->
+              <module>docker-hello-example</module>
+
+            <!-- for testing the API with DBs -->
+              <!-- Docker Compose and IT with docker compose -->
+              <module>dockercompose-it-example</module>
+
+              <!-- TestContainers -->
+              <!-- <module>testcontainers-ntest-example</module> -->
+
+              <!-- End-to-end flow with all the above -->
+              <!-- <module>dockercompose-votes-example</module> -->
+          </modules>
+      </profile>
+    </profiles>
+
+    
+    <dependencyManagement>
+        <dependencies>
+          <dependency>
+              <groupId>info.ejava.examples.build</groupId>
+              <artifactId>ejava-build-bom</artifactId>
+              <version>${project.version}</version>
+              <type>pom</type>
+              <scope>import</scope>
+          </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>
