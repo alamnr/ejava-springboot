@@ -25,6 +25,7 @@
           <module>failsafe-https-example</module>
           <module>docker-hello-example</module>
           <module>dockercompose-it-example</module>          
+          <module>testcontainers-ntest-example</module>
     </modules>
 
     <profiles>
