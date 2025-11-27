@@ -62,10 +62,10 @@
                 <executions>
                     <execution>
                         <id>reserve-network-port</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>reserve-network-port</goal>
                         </goals>
-                        <phase>process-resources</phase>
                         <configuration>
                             <portNames>
                                 <portName>server.http.port</portName>
