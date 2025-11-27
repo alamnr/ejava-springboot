@@ -243,7 +243,10 @@ public class SongsDerivedQueryNTest {
 
         //when
         List<Song> foundSongs = songsRepository.findByTitleContaining(substring);
-        
+        // select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.title like ? escape '\'
+
         log.info("title containing '{}' found {}", substring, foundSongs);
 
         //then
@@ -251,7 +254,169 @@ public class SongsDerivedQueryNTest {
         BDDAssertions.then(foundIds).isEqualTo(expectedIds);
     }
 
+    @Test
+    void findBy_not_contains() {
+        //given
+        Song song = savedSongs.stream().filter(s->s.getTitle()!=null).findFirst().get();
+        String substring = song.getTitle().substring(1,5);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->s.getTitle()!=null && !s.getTitle().contains(substring))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
 
+        //when
+        List<Song> foundSongs = songsRepository.findByTitleNotContaining(substring);
+        // select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.title not like ? escape '\'
+        log.info("title not containing '{}' found {}", substring, foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
+
+    @Test
+    void findBy_like() {
+        //given
+        String title = savedSongs.stream().filter(s->s.getTitle()!=null).findFirst().get().getTitle();
+        String likePattern = title.substring(0,1) + "%" + title.substring(title.length()-1,title.length());
+        String regexPattern = likePattern.replaceAll("%",".*");
+        log.info("title - {}, likePattern - {}, regexPattern - {} ", title, likePattern, regexPattern);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->s.getTitle()!=null && s.getTitle().matches(regexPattern))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
+
+        //when
+        List<Song> foundSongs = songsRepository.findByTitleLike(likePattern);
+        //  select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.title like ? escape '\'
+
+        log.info("title like '{}' found {}", likePattern, foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
+
+    @Test
+    void findBy_not_like() {
+        //given
+         String title = savedSongs.stream().filter(s->s.getTitle()!=null).findFirst().get().getTitle();
+        String likePattern = title.substring(0,1) + "%" + title.substring(title.length()-1,title.length());
+        String regexPattern = likePattern.replaceAll("%",".*");
+
+        log.info("title - {}, likePattern - {}, regexPattern - {} ", title, likePattern, regexPattern);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->s.getTitle()!=null && !s.getTitle().matches(regexPattern))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
+
+
+        //when
+        List<Song> foundSongs = songsRepository.findByTitleNotLike(likePattern);
+        // select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.title not like ? escape '\'
+
+        log.info("title like '{}' found {}", likePattern, foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
+
+    @Test
+    void findByAfter() {
+        //given - a middle song
+        Song firstSong = savedSongs.get(1);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->s.getReleased().isAfter(firstSong.getReleased()))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
+
+        //when
+        List<Song> foundSongs = songsRepository.findByReleasedAfter(firstSong.getReleased());
+        // select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.released>?
+
+        log.info("released after '{}' found {}", firstSong.getReleased(), foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
+
+
+    @Test
+    void findByGreaterThanEqual() {
+        //given - a middle song
+        Song firstSong = savedSongs.get(1);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->!s.getReleased().isBefore(firstSong.getReleased()))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
+
+        //when
+        List<Song> foundSongs = songsRepository.findByReleasedGreaterThanEqual(firstSong.getReleased());
+        // select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.released>=?
+
+        log.info("released GE '{}' found {}", firstSong.getReleased(), foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
+
+     @Test
+    void findByBetween() {
+        //given
+        Song firstSong = savedSongs.get(0);
+        Song lastSong = savedSongs.get(savedSongs.size()-1);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->!(s.getReleased().isBefore(firstSong.getReleased()) || s.getReleased().isAfter(lastSong.getReleased())))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
+
+        //when
+        List<Song> foundSongs = songsRepository.findByReleasedBetween(firstSong.getReleased(), lastSong.getReleased());
+        //  select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.released between ? and ?
+
+        log.info("released between '{}' and '{}' found {}", firstSong.getReleased(), lastSong.getReleased(), foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
+
+     @Test
+    void findBy_multiple_predicates() {
+        Song firstSong = savedSongs.get(0);
+        Set<Integer> expectedIds = savedSongs.stream()
+                .filter(s->s.getTitle()==null)
+                .filter(s->s.getReleased().isAfter(firstSong.getReleased()))
+                .map(s->s.getId())
+                .collect(Collectors.toSet());
+
+        //when
+        List<Song> foundSongs = songsRepository.findByTitleNullAndReleasedAfter(firstSong.getReleased());
+        // select s1_0.id,s1_0.artist,s1_0.released,s1_0.title 
+        // from reposongs_song s1_0 
+        // where s1_0.title is null and s1_0.released>?
+        
+        log.info("title null and released after '{}' found {}", firstSong.getReleased(), foundSongs);
+
+        //then
+        Set<Integer> foundIds = foundSongs.stream().map(s->s.getId()).collect(Collectors.toSet());
+        BDDAssertions.then(foundIds).isEqualTo(expectedIds);
+    }
 
 
 
