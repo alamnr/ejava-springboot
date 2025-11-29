@@ -1,0 +1,25 @@
+services:
+  mongodb:
+    image: mongo:4.4.0-bionic
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "27017"
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mongo-books-example:latest
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      - mongodb
+    environment:
+      - spring.profiles.active=integration
+      - MONGODB_URI=mongodb://admin:secret@mongo:27017/votes_db?authSource=admin
+
+#useful commands
+#docker-compose up -d
+#docker-compose exec mongodb mongo -u admin -p secret
+#docker-compose down

@@ -33,6 +33,7 @@ public interface SongsRepository extends JpaRepository<Song,Integer>, SongsRepos
 
 
     List<Song> findByReleasedAfter(LocalDate date);
+    Page<Song> findByReleasedAfter(LocalDate date, Pageable pageable);
     List<Song> findByReleasedGreaterThanEqual(LocalDate date);
     List<Song> findByReleasedBetween(LocalDate starting, LocalDate ending);
 

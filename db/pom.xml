@@ -19,6 +19,7 @@
 
     <modules>
         <module>db-jpa</module>
+        <module>db-mongo</module>
     </modules>
 
 
